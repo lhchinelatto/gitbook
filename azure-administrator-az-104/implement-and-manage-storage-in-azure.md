@@ -123,13 +123,13 @@ Storage Account > Container > Blob
 
 A blob can only exist within a container, which can storage an unlimited amount of blobs and a storage account can store an unlimited number of containers.
 
-Container access levels:
+#### Container Access Levels
 
 * Private (default) - No anonymous access.
 * Blob - Allows anonymous public read for the blobs.
 * Container - Allows anonymous public read (blob) and list (container)
 
-Access tiers:
+#### Blob Access Tiers
 
 | Compare                          | Hot tier                                               | Cool tier                                              | Archive tier                                             |
 | -------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ | -------------------------------------------------------- |
@@ -138,4 +138,56 @@ Access tiers:
 | **Latency (time to first byte)** | milliseconds                                           | milliseconds                                           | hours                                                    |
 | **Minimum storage duration**     | N/A                                                    | 30 days                                                | 180 days                                                 |
 | **Usage costs**                  | Higher storage costs, Lower access & transaction costs | Lower storage costs, Higher access & transaction costs | Lowest storage costs, Highest access & transaction costs |
+
+Blob access tiers can be changed at any time.
+
+#### Lifecycle Management
+
+Azure Blob Storage lifecycle management policy rules can be used to:
+
+* Transition blobs to cooler storage tiers.
+* Delete blobs at the end of their lifecycle.
+
+If / Then based rules:
+
+**If** last modified/created more than x days ago\
+**Then** move to cool/arquive or delete&#x20;
+
+#### Blob Object Replication
+
+> Not related to the Storage Account replication used for availability.
+
+Blob replication is based on policy rules configured by the user. They're replicated asynchronously. The replication happens between two (source/destination) storage accounts.
+
+Considerations:
+
+* Blob versioning must be enabled on both source and destination storage accounts.
+* Replication doesn't support blob snapshots.
+* Replication is supported for Hot and Cool tiers. Source and destination can be in different tiers.
+* In the policy, you must specify source and destination storage accounts and containers, and the blobs in the source container that will be replicated.
+* Can be used to reduce latency by replicating data across multiple regions.
+
+#### Blob Types
+
+* Block Blob - Consists of blocks of data. Ideal for text and binary (files, images, videos).
+* Append Blob - Also consists of blocks of data but is optimized for append operations. Useful for logging scenarios.
+* Page Blob - Can be up to 8TB. More efficient for frequent read/write operations. VMs uses page blobs for operating system disks and data disks.
+* After a blob is created, it's type can't be changed.
+
+#### Upload Blobs
+
+Upload tools:
+
+* Azure Storage Explorer - Azure Portal
+* AzCopy - Command-line tool.
+* Azure Data Box Disk - Service for transferring massive amounts of on-premises data. You copy data to physical disks and send then to Microsoft to be uploaded into Blob Storage.
+* Azure Import/Export - Service to export data from Blob Storage. You provide hard drives to Microsoft, who will copy the data to the disks and send back to you.
+
+#### Blob Storage Pricing
+
+* Performance Tiers
+  * Access (transaction) and storage costs.
+  * Changes to tiers - Cool to Hot charges reading all data. Hot to Cool charges writing all data.
+* Replication and Outbound data transfer
+  * Data transfers out of an Azure Region (GRS/RA-GRS) incur billing for bandwidth usage on a per-gigabyte basis.
 
