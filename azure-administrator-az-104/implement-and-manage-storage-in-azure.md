@@ -57,7 +57,7 @@ Used to store and receive messages, which can be up to 64KB in size. They are us
 
 Azure Table Storage is part of Azure Cosmos DB. Fully managed NoSQL database service. Cost-effective serverless and automatic scaling options. New service called Azure Cosmos DB Table API provides throughput-optimized tables, global distribution and automatically secondary indexes.
 
-<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
 ### Storage Account Types
 
@@ -72,7 +72,7 @@ Storage Account types:
 
 <mark style="background-color:orange;">All storage account types are encrypted with Storage Service Encryption (SSE) for data at rest.</mark>
 
-### Replication
+### <mark style="background-color:orange;">Replication</mark>
 
 Storage accounts are always replicated.
 
@@ -103,9 +103,9 @@ Best replication solution. Mix of GRS and ZRS. Data is available to read/write i
 
 Supported storage accounts: GPv2
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
 
 ### Access Storage
 
@@ -125,7 +125,7 @@ Blob Storage uses three resources to store and manage data:
 
 Storage Account > Container > Blob
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 A blob can only exist within a container, which can storage an unlimited amount of blobs and a storage account can store an unlimited number of containers.
 
@@ -226,3 +226,130 @@ URL that grants restricted access to Azure Storage resources.
 * You can specify an IP address or range to be allowed to use the SAS.
 * You can specify the use of HTTPS only or HTTPS and HTTP.
 
+### Encryption
+
+All Azure Storage data is encrypted at rest using AES 256-bit. Data is decrypted before its retrieved.
+
+Customer managed keys can also be used. Azure Key Vault must be in the same region as the storage account but doesn't need to be in the same subscription.
+
+## Configure Azure Files and Azure File Sync
+
+Uses Server Message Block (SMB) protocol and/or NFS. VMs (cloud and on-prem) and cloud services uses file share data by using mounted shares.
+
+Any number of VMs can mount and access a file share at the same time.
+
+Azure file is a good option when you want to store files, and development or debugging tools that needs to be accessed from multiple VMs. Also good for application lift and shift.
+
+<mark style="background-color:orange;">SMB protocol uses port 445. Enabling escure transfer is a best practice (HTTPS).</mark>
+
+File shares can be mounted to windows using a provided PowerShell code. You can use AD or a shared key to connect.
+
+In Linux, File Share is mounted using CIFS kernel client, with command mount. To make it persistent, create an entry in `/etc/fstab`
+
+You can create snapshots of file shares, with point-in-time read-only data. Snapshots are incremental and it's possible to restore a single file from it. File Shares with snapshots can only be deleted after the snapshots are deleted.
+
+Azure File Sync can be used to transform a VM into a cache for a File Share. Other VMs can pull data from that cache instead of directly from Azure File Share.
+
+File Sync supports cloud tiering, with that you can make hot files being stored in a cache server and cold files stored only on File Share. Access to cold files is transparent to user, as it appears to be in the server as well, only marked with an offline `0` file attribute.
+
+## Configure Azure Storage with Tools
+
+### Azure Storage Explorer
+
+Standalone application (win, liunx and macOS) to work with Azure Storage from your machine.
+
+Storage Explorer requires permissions on AAD level and data layer (storage account/services) permissions for full access.
+
+With Storage Explorer you can:
+
+* Connect to an Azure Subscription and manage storage resources within it.
+* Attach a Storage Account (from a sub that you don't have access) with an access key and endpoint.
+* Attach a Storage Account with a SAS
+* Attach a storage service with a SAS (blob container, queue or table)
+
+### Azure Import/Export Service
+
+Used to import your local data (HDD/SSD) to Blob Storage or Azure Files or export data from Blob Storage and Azure File to HDD/SSD.
+
+Data import/export jobs can be created from the portal or using the REST API.
+
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+
+WAImportExport tool is used to import/export data to the disks. It encrypts data with BitLocker and generate a journal files to document the data transfer.
+
+WAImportExport is available in two versions and is only compatible with 64bit Windows:
+
+* Version 1 is best for importing/exporting data in Blob Storage
+* Version 2 is best for importing data into Azure Files
+
+### AzCopy Tool
+
+Alternate method for transferring data to and from Blob Storage and Azure Files from the command line. It can even be used to copy data between two storage accounts. It can also be used to list or remove files or blobs.
+
+It's built into Azure Storage Explorer and is also available for Windows, Linux and macOS.
+
+Authentication can be done with AAD (Blob Storage and Data Lake Storage Gen2) and SAS tokens (Blob Storage and Azure Files).
+
+```bash
+azcopy copy [source] [destination] [flags]
+```
+
+## Create an Azure Storage Account
+
+Azure Storage:
+
+<figure><img src="../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
+
+Storage Account:
+
+<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+
+Azure Services like Azure SQL and Cosmos DB are not part of a Storage account.
+
+<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+
+It's useful to group use multiple services in the same storage account to apply same settings and controls to all services facilitating management.
+
+You should use different storage accounts if you need different settings for different data (region, replication, access, billing, performance) or if you require data isolation.
+
+## Control Access to Azure Storage with Shared Access Signatures
+
+Access options:
+
+* **Public access**
+* **AAD** - Best for apps with managed identities or security principals.
+* **Shared key** - Two keys are always created. They grant root access to the storage account. Use Azure Key Vault to manage those keys.
+* **SAS** - Key that grants granular level of access to a storage account.
+  * **User delegation SAS**: Can only be used for Blob storage and is secured with Azure AD credentials.
+  * **Service SAS**: A service SAS is secured using a storage account key. A service SAS delegates access to a resource in any one of four Azure Storage services: Blob, Queue, Table, or File.
+  * **Account SAS**: An account SAS is secured with a storage account key. An account SAS has the same controls as a service SAS, but can also control access to service-level operations, such as Get Service Stats.
+
+### Stored Access Policies
+
+Without a stored access policy, if a SAS is compromised, the only way to revoke it before expiration is to regenerate access keys, which requires you to update all apps that are using the old shared key.
+
+```bash
+az storage container policy create \
+    --name <stored access policy identifier> \
+    --container-name <container name> \
+    --start <start time UTC datetime> \
+    --expiry <expiry time UTC datetime> \
+    --permissions <(a)dd, (c)reate, (d)elete, (l)ist, (r)ead, or (w)rite> \
+    --account-key <storage account key> \
+    --account-name <storage account name> \
+```
+
+You create a SAS token and associate it with a store access policy.
+
+## Upload, Download and Manage Data with Azure Storage Explorer
+
+Also supports Azure Data Lake Storage
+
+* Azure Data Lake, based on Apache Hadoop, is designed for large data volumes and can store unstructured and structured data. Azure Data Lake Storage Gen1 is a dedicated service. Azure Data Lake Storage Gen2 is Azure Blob Storage with the hierarchical namespace feature enabled on the account.
+
+Storage Explorer can also emulate a storage account so developers can test stuff locally without costs.
+
+* Azure Storage Emulator uses a local instance of Microsoft SQL Server 2012 Express LocalDB. It emulates Azure Table, Queue, and Blob storage.
+* Azurite, which is based on Node.js, is an open-source emulator that supports most Azure Storage commands through an API.
