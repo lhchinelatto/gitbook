@@ -275,7 +275,7 @@ Data import/export jobs can be created from the portal or using the REST API.
 
 <figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
 
 WAImportExport tool is used to import/export data to the disks. It encrypts data with BitLocker and generate a journal files to document the data transfer.
 
