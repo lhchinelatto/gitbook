@@ -31,11 +31,26 @@ VM Classifications:
 
 You can resize the VM to any size available in the region. Resizing a VM require a restart and can change configuration settings like the IP address.
 
+All VMs have at least two disks (OS and t mp). Disks are stored as virtual hard disks (VHD). Temp disk data may be lost during operations such as moving to a new host. Do not store data on temp disks.
 
+Data disks are registered as SCSI drivers and the size of the VM determines how many data disks you can attach.
 
+Considerations on disks:
 
+* You can choose premium storage for higher performance on SSD disks.
+* Using multiple disks, a VM can get up to 256 TB of storage.
+* Managed disks are stored as page blobs. They're named managed because the concept of storage account, container and blobs is transparent.
+* Available disk types are: Ultra SSD, Premium SSD, Standard SSD and HDD.
 
+Connecting to a VM using Azure Bastion:
 
+<figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
+
+Windows connection uses RDP (Remote Desktop Protocol) which provides a graphical user interface. <mark style="background-color:orange;">RDP default port is 3389</mark>.
+
+Linux connection uses SSH (Secure Shell Protocol).
+
+Azure Bastion is a fully platform-managed PaaS service providing secure and seamless RDP/SSH connection to your VMs over SSL in the virtual network it's provisioned. Using Bastion, VMs doesn't need public IPs. With Bastion you don't need to expose RDP and SSH ports on the internet.
 
 
 

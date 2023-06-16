@@ -57,7 +57,7 @@ Used to store and receive messages, which can be up to 64KB in size. They are us
 
 Azure Table Storage is part of Azure Cosmos DB. Fully managed NoSQL database service. Cost-effective serverless and automatic scaling options. New service called Azure Cosmos DB Table API provides throughput-optimized tables, global distribution and automatically secondary indexes.
 
-<figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
 
 ### Storage Account Types
 
@@ -103,9 +103,9 @@ Best replication solution. Mix of GRS and ZRS. Data is available to read/write i
 
 Supported storage accounts: GPv2
 
-<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
 ### Access Storage
 
@@ -125,7 +125,7 @@ Blob Storage uses three resources to store and manage data:
 
 Storage Account > Container > Blob
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 A blob can only exist within a container, which can storage an unlimited amount of blobs and a storage account can store an unlimited number of containers.
 
@@ -275,7 +275,7 @@ Data import/export jobs can be created from the portal or using the REST API.
 
 <figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
 
 WAImportExport tool is used to import/export data to the disks. It encrypts data with BitLocker and generate a journal files to document the data transfer.
 
