@@ -103,7 +103,7 @@ Best replication solution. Mix of GRS and ZRS. Data is available to read/write i
 
 Supported storage accounts: GPv2
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
@@ -125,7 +125,7 @@ Blob Storage uses three resources to store and manage data:
 
 Storage Account > Container > Blob
 
-<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8) (1).png" alt=""><figcaption></figcaption></figure>
 
 A blob can only exist within a container, which can storage an unlimited amount of blobs and a storage account can store an unlimited number of containers.
 
