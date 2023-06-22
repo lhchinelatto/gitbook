@@ -5,3 +5,4 @@
   * [Manage identities and governance in Azure](azure-administrator-az-104/manage-identities-and-governance-in-azure.md)
   * [Implement and Manage Storage in Azure](azure-administrator-az-104/implement-and-manage-storage-in-azure.md)
   * [Deploy and Manage Azure Compute Resources](azure-administrator-az-104/deploy-and-manage-azure-compute-resources.md)
+  * [Configure and Manage Virtual Networks for Azure Administrators](azure-administrator-az-104/configure-and-manage-virtual-networks-for-azure-administrators.md)
