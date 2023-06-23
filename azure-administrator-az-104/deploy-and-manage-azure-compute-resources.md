@@ -44,7 +44,7 @@ Considerations on disks:
 
 Connecting to a VM using Azure Bastion:
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
 Windows connection uses RDP (Remote Desktop Protocol) which provides a graphical user interface. <mark style="background-color:orange;">RDP default port is 3389</mark>.
 
@@ -66,7 +66,7 @@ Update domain is a group of nodes that upgrade/reboot together. During planned m
 
 Fault domain is a group of nodes in the same physical unit of failure, sharing same hardware.
 
-<figure><img src="../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
 
 An Availability Zone in Azure is a combination of a fault domain and an update domain. If you create three or more VMs across three zone in an Azure region, the VMs are distributed across three fault domains and three update domains.
 
@@ -212,7 +212,7 @@ If the storage account is enabled with a firewall, you can't use the storage acc
 
 You can get insights of your App Service using Application Insights, a feature of Azure Monitor. It can be configured within your App Service (not supported for all frameworks).
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 With Applications Insights you can track:
 
@@ -290,7 +290,7 @@ There are four service types for configuring network:
 
 ### Configure Azure Kubernetes Service Storage
 
-<figure><img src="../.gitbook/assets/image (15).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (20).png" alt=""><figcaption></figcaption></figure>
 
 * Traditional storage volumes that store and retrieve data are created as Kubernetes resources backed by Azure Storage.
 * You can manually create storage volumes to be assigned to pods directly, or have Kubernetes automatically create them.
@@ -325,7 +325,7 @@ A persistent volume claim (`PersistentVolumeClaim`) requests either Azure Disks 
 
 ### Configure Azure Kubernetes Service Scaling
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
 
 | Scaling technique                | Description                                                                                                                                                                                                                                                                                                                                                                                                                   | Version requirements                                                    |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -590,6 +590,6 @@ Start-DscConfiguration -path D:\
 
 Pull mode:
 
-<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
