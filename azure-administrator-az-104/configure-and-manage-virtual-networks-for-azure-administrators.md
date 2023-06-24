@@ -8,7 +8,7 @@ You control the DNS server settings for virtual networks, and segmentation of th
 
 OSI layers reference:
 
-<figure><img src="../.gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (22).png" alt=""><figcaption></figcaption></figure>
 
 ### Create Subnets
 
@@ -52,7 +52,7 @@ There are two types of addresses:
 
 A resource can have both types of IPs
 
-<figure><img src="../.gitbook/assets/image (19).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (24).png" alt=""><figcaption></figcaption></figure>
 
 Things to know:
 
@@ -129,11 +129,11 @@ Things to know about NSG security rules:
 
 Default inbound security rules:
 
-<figure><img src="../.gitbook/assets/image (22).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (28).png" alt=""><figcaption></figcaption></figure>
 
 Default outbound security rules:
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 For VMs, which can have a subnet associated NSG and a NIC associated NSG, NSG rules are applied in order. The first NSG hit (subnet - inbound / NIC - outbound) may block rules that are allowed on the next.
 
@@ -141,7 +141,7 @@ For VMs, which can have a subnet associated NSG and a NIC associated NSG, NSG ru
 * For outbound traffic, the process is reversed. Azure first evaluates network security group security rules for any associated network interfaces followed by any associated subnets.
 * For both the inbound and outbound evaluation process, Azure also checks how to apply the rules for intra-subnet traffic.
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
 ### Application Security Groups
 
@@ -155,7 +155,7 @@ By organizing your virtual machines into application security groups, you don't 
 
 Azure Firewall is a managed, cloud-based network security service that protects your Azure Virtual Network resources. It's a fully stateful firewall as a service with built-in high availability and unrestricted cloud scalability. You can centrally create, enforce, and log application and network connectivity policies across subscriptions and virtual networks.
 
-<figure><img src="../.gitbook/assets/image (21).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (27).png" alt=""><figcaption></figcaption></figure>
 
 When you deploy a firewall, the recommended approach is to implement a **hub-spoke** network topology.
 
@@ -165,7 +165,7 @@ The **hub** is a virtual network in Azure that acts as a central point of connec
 
 Traffic flows between an on-premises datacenter and the hub network through an Azure connection, such as Azure ExpressRoute, Azure VPN Gateway, or Azure Bastion.
 
-<figure><img src="../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (17).png" alt=""><figcaption></figcaption></figure>
 
 * **Consider cost savings**. Implement a hub-spoke network and reduce your costs by centralizing services that can be shared by multiple workloads in a single location. Examples of services that can use shareable workloads include network virtual appliances (NVAs) and DNS servers.
 * **Consider subscription limits**. Overcome subscription limits by peering your virtual networks from different subscriptions to the central hub network.
@@ -212,4 +212,190 @@ Here are the configuration settings for an application rule:
 * **Source Addresses**: Identify the IP address of the source.
 * **Protocol:Port**: Specify `HTTP` or `HTTPS` and the port that the web server is listening on.
 * **Target FQDNs**: Provide the domain name of the service, such as `www.contoso.com`. Wildcards (\*) can be used. An FQDN tag represents a group of FQDNs associated with well known Microsoft services. Example FQDN tags include `Windows Update`, `App Service Environment`, and `Azure Backup`.
+
+## Configure Azure DNS
+
+Azure DNS enables you to host your DNS domains in Azure and access name resolution for your domains by using Microsoft Azure infrastructure.
+
+When you create an Azure subscription, Azure automatically creates an Azure Active Directory (Azure AD) domain for your subscription. The initial domain name follows the form `<Your Domain Name>` followed by `.onmicrosoft.com`. The initial domain is intended to be used until you configure your custom domain, which needs to be verified by Azure (can take hours).
+
+Domains must be globally unique within Azure.
+
+An Azure **DNS zone** hosts the DNS records for a domain. To begin hosting your domain in Azure DNS, you need to create a DNS zone for your domain name. Each DNS record for your domain is then created inside your DNS zone.
+
+A DNS record set (also known as a _resource record set_) is a collection of records in a DNS zone.
+
+*   All records in a DNS record set must have the same name and the same record type.
+
+    Consider the following example where we have two records in a record set. All records have the same name, `www.contoso.com.`. All records have the same record type, `A`. Each record in the set has a different value. In this case, each record provides a different IP address.
+
+    ```console
+    www.contoso.com.        3600    IN    A     134.170.185.46
+    www.contoso.com.        3600    IN    A     134.170.188.221
+    ```
+* A DNS record set can't contain two identical records.
+*   A record set of type `CNAME` can contain only one record.
+
+    A `CNAME` record (or _Canonical name record_) provides an alias of one domain name to another. This record is used to provide another name for your domain. The DNS `lookup` operation tries to find your domain by retrying the `lookup` with the other name specified in the `CNAME` record.
+
+Azure Private DNS provides name resolution within your virtual networks and not provide name resolution on the internet.
+
+## Configure Azure Virtual Network Peering
+
+Azure Virtual Network peering lets you connect virtual networks in the same or different regions, so resources in both networks can communicate with each other. After the two VNets are peered, they operate as a single network (for connectivity purposes).
+
+<figure><img src="../.gitbook/assets/image (26).png" alt=""><figcaption></figcaption></figure>
+
+There are two types of network peering, **Global** and **Regional**.
+
+| Benefit                         | Description                                                                                                                                                                                                                                                                                                    |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Private network connections** | When you implement Azure Virtual Network peering, network traffic between peered virtual networks is private. Traffic between the virtual networks is kept on the Microsoft Azure backbone network. No public internet, gateways, or encryption is required in the communication between the virtual networks. |
+| **Strong performance**          | Because Azure Virtual Network peering utilizes the Azure infrastructure, you gain a low-latency, high-bandwidth connection between resources in different virtual networks.                                                                                                                                    |
+| **Simplified communication**    | Azure Virtual Network peering lets resources in one virtual network communicate with resources in a different virtual network, after the virtual networks are peered.                                                                                                                                          |
+| **Seamless data transfer**      | You can create an Azure Virtual Network peering configuration to transfer data across Azure subscriptions, deployment models, and across Azure regions.                                                                                                                                                        |
+| **No resource disruptions**     | Azure Virtual Network peering doesn't require downtime for resources in either virtual network when creating the peering, or after the peering is created.                                                                                                                                                     |
+
+To implement virtual network peering, your Azure account must be assigned to the `Network Contributor` or `Classic Network Contributor` role (or a custom role with needed permissions).
+
+When virtual networks are peered, you can configure Azure VPN Gateway in the peered virtual network as a _transit point_.
+
+\
+
+
+<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+
+Things to know about how VPN Gateway is implemented with Azure Network peering:
+
+* A virtual network can have only one VPN gateway.
+* Gateway transit is supported for both regional and global virtual network peering.
+* When you allow VPN gateway transit, the virtual network can communicate to resources outside the peering. In our sample illustration, the gateway subnet gateway within the hub virtual network can complete tasks such as:
+  * Use a site-to-site VPN to connect to an on-premises network.
+  * Use a vnet-to-vnet connection to another virtual network.
+  * Use a point-to-site VPN to connect to a client.
+* Gateway transit allows peered virtual networks to share the gateway and get access to resources. With this implementation, you don't need to deploy a VPN gateway in the peer virtual network.
+* You can apply network security groups in a virtual network to block or allow access to other virtual networks or subnets. When you configure virtual network peering, you can choose to open or close the network security group rules between the virtual networks.
+
+### Extend Peering with User-Defined Routes and Service Chaining
+
+If you peer VNet A with B, and B with C, VNet A doesn't have connectivity with C.
+
+There are ways to extend peering:
+
+* Hub and spoke networks
+* User-defined routes
+* Service chaining
+
+You can implement these mechanisms and create a multi-level hub and spoke architecture.
+
+
+
+<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+
+| Mechanism                    | Description                                                                                                                                                                                                                                                                                                           |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Hub and spoke network**    | When you deploy a hub-and-spoke network, the hub virtual network can host infrastructure components like a network virtual appliance (NVA) or Azure VPN gateway. All the spoke virtual networks can then peer with the hub virtual network. Traffic can flow through NVAs or VPN gateways in the hub virtual network. |
+| **User-defined route (UDR)** | Virtual network peering enables the next hop in a user-defined route to be the IP address of a virtual machine in the peered virtual network, or a VPN gateway.                                                                                                                                                       |
+| **Service chaining**         | Service chaining lets you define UDRs. These routes direct traffic from one virtual network to an NVA or VPN gateway.                                                                                                                                                                                                 |
+
+## Configure Azure VPN Gateway
+
+A VPN gateway is a specific type of virtual network gateway that's used to send encrypted traffic between your Azure virtual network and an on-premises location over the public internet. A VPN gateway can also be used to send encrypted traffic between your Azure virtual networks over the Microsoft network.
+
+Things to know about VPN Gateways:
+
+* When you implement a VPN gateway, the VPN service intercepts your data and applies encryption before it reaches the internet.
+* The VPN service uses a secure pathway (called a _VPN tunnel_) for movement of your data between your device and the internet. The VPN tunnel is what enables your secure connection to the internet.
+* A virtual network can have only one VPN gateway.
+* Multiple connections can be created to the same VPN gateway.
+* When you create multiple connections to the same VPN gateway, all VPN tunnels share the available gateway bandwidth.
+* A VPN gateway can be deployed in Azure availability zones to gain resiliency, scalability, and higher availability to virtual network gateways. Availability zones physically and logically separate gateways within a region, while protecting your on-premises network connectivity to Azure from zone-level failures.
+
+| Configuration                                                                | Scenarios                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <p><strong>Site-to-site</strong><br>(S2S)</p>                                | <p>- Connect your on-premises datacenters to your Azure virtual networks through an IPsec/IKE (IKEv1 or IKEv2) VPN tunnel<br>- Support cross-premises and hybrid configurations<br>- Configure S2S VPN and Azure ExpressRoute for the same virtual network<br>- Configure S2S VPN as a secure failover path for ExpressRoute<br>- Use S2S VPNs to connect to sites outside your network that are connected through ExpressRoute</p>                                                                            |
+| <p><strong>Point-to-site</strong><br>(P2S or User VPN)</p>                   | <p>- Connect individual devices to your Azure virtual networks<br>- Create a secure connection to your virtual network from an individual client computer<br>- Useful for remote or traveling workers who want to connect to Azure virtual networks from their current location<br>- Support a few clients that need to connect to a virtual network</p>                                                                                                                                                       |
+| <p><strong>Virtual network to virtual network</strong><br>(VNet-to-VNet)</p> | <p>- Connect one virtual network to another virtual network through an IPsec/IKE VPN tunnel<br>- Build a network that integrates cross-premises connectivity with inter-virtual network connectivity by combining VNet-to-VNet communication with multi-site connection configurations<br>- Connect virtual networks in the same or different regions<br>- Connect virtual networks in the same or different subscriptions<br>- Connect virtual networks that have the same or different deployment models</p> |
+| **Highly available**                                                         | <p>- Support high availability for cross-premises and VNet-to-VNet connections<br>- Implement high availability for multiple on-premises VPN devices<br>- Implement high availability for an active-active Azure VPN gateway<br>- Implement high availability for a combination of multiple on-premises VPN devices and an active-active Azure VPN gateway</p>                                                                                                                                                 |
+
+### Create Site-to-Site Connections
+
+Steps to create a S2S connection:
+
+<figure><img src="../.gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
+
+#### Create Gateway Subnet (step 3):
+
+* You deploy a gateway in your virtual network by adding a gateway subnet.
+* Your gateway subnet must be named _GatewaySubnet_.
+* The gateway subnet contains the IP addresses that are used by your virtual network gateway resources and services.
+* When you create your gateway subnet, gateway virtual machines are deployed to the gateway subnet and configured with the required VPN gateway settings.
+* **Consider gateway subnet size**. Some configurations require a larger gateway subnet than others. For the recommended sizes, refer to the documentation for the configuration that you're planning to create. If possible, it's best to create a gateway subnet by using a classless inter-domain routing (CIDR) block of /28 or /27. This approach should provide enough IP addresses to accommodate future configuration requirements.
+* **Consider no extra resources**. Identify your required virtual network gateway resources, including virtual machines. When you create your gateway subnet, gateway virtual machines are deployed to the gateway subnet. Never deploy other resources to the gateway subnet, such as extra virtual machines.
+* **Consider network security groups**. Network security groups (NSGs) can't be used to create the gateway subnet. If you try to create your gateway subnet with NSGs, the configuration will be blocked.
+
+#### Create VPN Gateway (step 4):
+
+Important settings:
+
+* **Gateway type**: Select the type of gateway to create, **VPN** (Azure VPN gateway) or **ExpressRoute** (Azure ExpressRoute).
+* **VPN type**: Select the type of VPN to create, **Route-based** or **Policy-based**. The type of VPN you choose depends on the make and model of your VPN device, and the kind of VPN connection you intend to create. In the next unit, we examine the options for this parameter setting in detail.
+  * Route-based VPN gateways are the most common. Typical scenarios include point-to-site, inter-virtual network, or multiple site-to-site connections. Select route-based when your virtual network coexists with an Azure ExpressRoute gateway, or if you need to use the IKEv2 protocol.
+  * Policy-based VPN gateways support only the IKEv1 protocol.
+*   **SKU**: Use the drop-down menu to select a gateway SKU. Review SKU options in the [Determine gateway SKU and generation](https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways#gwsku) unit.
+
+    Your choice affects the number of VPN tunnels you can have and the Aggregate Throughput Benchmark. The benchmark value is based on measurements of multiple tunnels aggregated through a single gateway. The throughput isn't guaranteed due to internet traffic conditions and your application behavior.
+*   **Generation**: Use the drop-down menu to select the gateway generation, **Generation1** or **Generation2**. Generation2 offers improved performance and SLA for the same price as Generation1.
+
+    * Generation1 supports Basic and VpnGw1 SKUs, along with most other SKUs supported in Generation2.
+    * Generation2 supports most SKUs available in Generation1, along with VpnGw4 and VpnGw5.
+
+    &#x20;<mark style="background-color:orange;">You can't change generations or SKUs across generations.</mark>
+* **Virtual network**: Use the drop-down menu to select an existing virtual network for the VPN gateway or select **Create virtual network** to configure a new virtual network. Keep in mind that a virtual network can't be associated with more than one gateway. The virtual network sends and receives traffic through the VPN gateway.
+
+**VPN types**:
+
+* **Route-based VPNs** use _routes_ in the IP forwarding or routing table to direct packets into their corresponding tunnel interfaces. The tunnel interfaces then encrypt or decrypt the packets in and out of the VPN tunnels. The policy (or traffic selector) for route-based VPNs are configured as any-to-any (or wild cards).
+  * Most VPN gateway configurations require a route-based VPN.
+  * Use a route-based VPN when your virtual network coexists with an Azure ExpressRoute gateway, or if you need to use the IKEv2 protocol.
+*   **Policy-based VPNs** encrypt and direct packets through IPsec tunnels based on the IPsec policies. The policies are configured with the combinations of address prefixes between your on-premises network and the Azure virtual network. The policy (or traffic selector) is defined as an access list in the VPN device configuration.
+
+    Keep in mind the following limitations about policy-based VPNs:
+
+    * A policy-based VPN can be used on the Basic gateway SKU only. The policy-based VPN type isn't compatible with other gateway SKUs.
+    * When you use a policy-based VPN, you can have only one VPN tunnel.
+    * You can only use policy-based VPNs for S2S connections, and only for certain configurations.
+
+<mark style="background-color:orange;">After a virtual network gateway is created, you can't change the VPN type.</mark>
+
+**SKU and Generation**:
+
+* **Tunnels**: The maximum number of site-to-site (S2S) and Net-to-VNet tunnels that can be created for the SKU.
+* **Connections**: The maximum number of point-to-site (P2S) IKEv2 connections that can be created for the SKU.
+* **Aggregate Throughput Benchmark**: The benchmark is based on measurements of multiple VPN tunnels aggregated through a single gateway. The Aggregate Throughput Benchmark for a VPN gateway is S2S + P2S combined. The Aggregate Throughput Benchmark isn't a guaranteed throughput due to internet traffic conditions and your application behavior.
+
+Note: Basic SKU is considered a legacy SKU
+
+Generation1
+
+| SKU       | Tunnels | Connections | Benchmark |
+| --------- | ------- | ----------- | --------- |
+| VpnGw1/Az | Max. 30 | Max. 250    | 650 Mbps  |
+| VpnGw2/Az | Max. 30 | Max. 500    | 1.0 Gbps  |
+| VPNGw3/Az | Max. 30 | Max. 1000   | 1.25 Gbps |
+
+Generation2
+
+| SKU       | Tunnels  | Connections | Benchmark |
+| --------- | -------- | ----------- | --------- |
+| VpnGw2/Az | Max. 30  | Max. 500    | 1.25 Gbps |
+| VPNGw3/Az | Max. 30  | Max. 1000   | 2.5 Gbps  |
+| VPNGw4/Az | Max. 100 | Max. 5000   | 5.0 Gbps  |
+| VPNGw5/Az | Max. 100 | Max. 10000  | 10.0 Gbps |
+
+#### Create Local Network Gateway&#x20;
+
+
+
+
 
