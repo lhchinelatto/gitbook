@@ -2,9 +2,13 @@
 
 ## Plan Virtual Networks
 
-An Azure virtual network is a logical isolation of the Azure cloud that's dedicated to your subscription.&#x20;
+An Azure virtual network is a logical isolation of the Azure cloud that's dedicated to your subscription. A VNET can't span between subscriptions and regions.
 
 You control the DNS server settings for virtual networks, and segmentation of the virtual network into subnets.
+
+OSI layers reference:
+
+<figure><img src="../.gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
 
 ### Create Subnets
 
@@ -14,6 +18,8 @@ Subnets provide a way for you to implement logical divisions within your virtual
 * The address range for a subnet must be unique within the address space for the virtual network.
 * The range for one subnet can't overlap with other subnet IP address ranges in the same virtual network.
 * The IP address space for a subnet must be specified by using CIDR notation.
+* Smallest subnet possible is /29 which will give 3 usable IP addresses.
+* Subnets are regional and span availability zones.
 
 For each subnet, Azure reserves five IP addresses. The first four addresses and the last address are reserved.
 
@@ -135,7 +141,7 @@ For VMs, which can have a subnet associated NSG and a NIC associated NSG, NSG ru
 * For outbound traffic, the process is reversed. Azure first evaluates network security group security rules for any associated network interfaces followed by any associated subnets.
 * For both the inbound and outbound evaluation process, Azure also checks how to apply the rules for intra-subnet traffic.
 
-<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
 ### Application Security Groups
 
@@ -159,7 +165,7 @@ The **hub** is a virtual network in Azure that acts as a central point of connec
 
 Traffic flows between an on-premises datacenter and the hub network through an Azure connection, such as Azure ExpressRoute, Azure VPN Gateway, or Azure Bastion.
 
-<figure><img src="../.gitbook/assets/image (15).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
 
 * **Consider cost savings**. Implement a hub-spoke network and reduce your costs by centralizing services that can be shared by multiple workloads in a single location. Examples of services that can use shareable workloads include network virtual appliances (NVAs) and DNS servers.
 * **Consider subscription limits**. Overcome subscription limits by peering your virtual networks from different subscriptions to the central hub network.
